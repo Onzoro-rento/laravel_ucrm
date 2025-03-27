@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\InertiaTest;
+use Illuminate\Validation\ValidationException;
 class InertiaTestController extends Controller
 {
     public function index()
@@ -14,18 +15,48 @@ class InertiaTestController extends Controller
     public function create()
     {
         return Inertia::render('Inertia/Create');
+
     }
     public function show($id)
     {
         return Inertia::render('Inertia/Show', ['id' => $id]);
     }
+    // App\Http\Controllers\InertiaTestController.php
     public function store(Request $request)
     {
-        $inertiaTest = new InertiaTest;
-        $inertiaTest->title = $request->title;
-        $inertiaTest->content = $request->content;
-        $inertiaTest->save();
+        
+        $request->validate([
+            'title' => ['required','max:20'],
+            'content' => ['required']
+        ]);
+        return to_route('inertia.index');
 
-        return Inertia::location(route('inertia.index'));
+           
+        // try {
+        //     $request->validate([
+        //         'title' => ['required','max:20'],
+        //         'content' => ['required']
+        //     ]);
+
+        //     InertiaTest::create([
+        //         'title' => $request->title,
+        //         'content' => $request->content,
+        //     ]);
+        //     return to_route('inertia.index');
+        
+        // }
+        // catch (ValidationException $e) {
+        //     return Inertia::render('Inertia/Create', [
+        //         'errors' => $e->errors(),
+                
+        //     ]);
+        // }
+        
+
+    
+        
+        // Inertia::location() は使わない
+        
     }
+
 }
